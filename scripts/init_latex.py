@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import configparser
 import os
 
 
@@ -12,7 +13,7 @@ def main():
 def init_latex():
     """Generate a LaTeX file."""
     args = argparser()
-    config = configparser()
+    config = parse_config()
 
     main_fname = "main.tex"
     preamble_fname = "preamble.tex"
@@ -51,7 +52,7 @@ def init_latex():
         with open(bib_fname, "w"):
             pass
 
-def configparser():
+def parse_config():
     """Config file parser to read deafault settings
 
     The config file can be created by the user to 
@@ -104,51 +105,63 @@ def argparser():
     no_toc = "If this flag is set, do not include a table of contents."
     parser.add_argument("--no_toc", action="store_true", help=no_toc)
 
+    template_path = "Path to a directory containing template files."
+    parser.add_argument("--template_path", type = str)
+
     return parser.parse_args()
 
 def main_file(args):
     """Generate main.tex"""
-    document = []
-    document.append(r"\documentclass[a4paper]{article}")
-    document.append("")
-    document.append(r"\input{preamble}")
-    document.append("")
-    document.append(r"\title{" + f"{args.title}" + r"}")
-    document.append(r"\author{" + f"{args.author}" + r"}")
-    document.append(r"\date{\today}")
-    document.append("")
-    document.append(r"\begin{document}")
-    document.append("")
-    document.append(r"  \maketitle")
-    if not args.no_toc:
-        document.append(r"  \tableofcontents")
-    document.append("")
-    if args.bib:
-        document.append(r"  \appendix")
-        document.append(r"  \input{appendix}")
-        document.append(r"  \printbibliography[heading=bibintoc]")
+    if args.template_path is not None:
+        template = os.path.join(args.template_path, 'main.tex')
+        with open(template, 'r') as f:
+            document = f.read().splitlines()
+    else:
+        document = []
+        document.append(r"\documentclass[a4paper]{article}")
         document.append("")
-    document.append(r"\end{document}")
+        document.append(r"\input{preamble}")
+        document.append("")
+        document.append(r"\title{" + f"{args.title}" + r"}")
+        document.append(r"\author{" + f"{args.author}" + r"}")
+        document.append(r"\date{\today}")
+        document.append("")
+        document.append(r"\begin{document}")
+        document.append("")
+        document.append(r"  \maketitle")
+        if not args.no_toc:
+            document.append(r"  \tableofcontents")
+        document.append("")
+        if args.bib:
+            document.append(r"  \appendix")
+            document.append(r"  \input{appendix}")
+            document.append(r"  \printbibliography[heading=bibintoc]")
+            document.append("")
+        document.append(r"\end{document}")
     
     return document
 
 def preamble_file(args):
-    document = []
-
-    document.append(r"\usepackage[utf8]{inputenc}")
-    document.append(r"\usepackage[british]{babel}")
-    document.append("")
-    if args.bib:
-        document.append(r"\usepackage{biblatex}")
-        document.append(r"\addbibresource{bibliography.bib}")
+    if args.template_path is not None:
+        template = os.path.join(args.template_path, 'preamble.tex')
+        with open(template, 'r') as f:
+            document = f.read.splitlines()
+    else:
+        document = []
+        document.append(r"\usepackage[utf8]{inputenc}")
+        document.append(r"\usepackage[british]{babel}")
         document.append("")
-    document.append(r"\usepackage[dvipsnames]{xcolor}")
-    document.append(r"\newcommand{\red}[1]{{\color{red}#1}}")
-    document.append(r"\newcommand{\todo}[1]{\red{\textbf{#1}}}")
-    document.append("")
-    document.append(r"\usepackage[colorlinks=true]{hyperref}")
-    document.append(r"\usepackage[nameinlink,capitalize]{cleveref}")
-    document.append("")
+        if args.bib:
+            document.append(r"\usepackage{biblatex}")
+            document.append(r"\addbibresource{bibliography.bib}")
+            document.append("")
+        document.append(r"\usepackage[dvipsnames]{xcolor}")
+        document.append(r"\newcommand{\red}[1]{{\color{red}#1}}")
+        document.append(r"\newcommand{\todo}[1]{\red{\textbf{#1}}}")
+        document.append("")
+        document.append(r"\usepackage[colorlinks=true]{hyperref}")
+        document.append(r"\usepackage[nameinlink,capitalize]{cleveref}")
+        document.append("")
 
     return document
 
