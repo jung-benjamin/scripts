@@ -4,7 +4,7 @@
 import argparse
 import configparser
 import os
-
+import shutil
 
 def main():
     """Generate a LaTeX file."""
@@ -52,6 +52,16 @@ def init_latex():
         with open(bib_fname, "w"):
             pass
 
+    if args.template_path:
+        with os.scandir(args.template_path) as it:
+            for element in it:
+                if element.name.startswith('.'):
+                    pass
+                elif element.is_file(follow_symlinks = False):
+                    shutil.copyfile(element.path, os.path.join(element.name))
+                elif element.is_dir(follow_symlinks = False):
+                    shutil.copytree(element.path, os.path.join(element.name))
+                
 def parse_config():
     """Config file parser to read deafault settings
 
@@ -145,7 +155,7 @@ def preamble_file(args):
     if args.template_path is not None:
         template = os.path.join(args.template_path, 'preamble.tex')
         with open(template, 'r') as f:
-            document = f.read.splitlines()
+            document = f.read().splitlines()
     else:
         document = []
         document.append(r"\usepackage[utf8]{inputenc}")
