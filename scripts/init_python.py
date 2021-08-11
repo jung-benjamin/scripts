@@ -3,6 +3,7 @@
 
 import argparse
 import os
+import configparser
 
 def main():
     """Generate a Python script with a main, shebang, etc."""
@@ -18,10 +19,37 @@ def init_python():
         msg = f"'{fname}' already exists!"
         raise FileExistsError(msg)
 
+    ## make a config parser
+    ## then update the default dict with the argparser arguments
     with open(os.path.join(cwd, fname), "w") as f:
         for line in file_input(args):
             f.write(line.replace("\t", 4*" ") + "\n")
 
+def configparser():
+    """Config file parser to read deafault settings
+
+    The config file can be created by the user to 
+    change default arguments of the file creation 
+    function.
+    """
+    parser = configparser.ConfigParser()
+    config_file = None
+    ## expand the search options for the config file later
+    ## keep the list in the priority order
+    config_locs = [os.curdir, os.path.expanduser('~')] 
+    for loc in config_locs:
+        if os.path.exists(os.path.join(loc, 'scripts_config.cf')):
+            config_file = os.path.join(loc, 'scripts_config.cf')
+            break
+        else:
+            pass
+    
+    if config_file is not None:
+        parser.read(config_file)
+        return parser
+    else:
+        return
+            
 def argparser():
     """Argument parser to allow for a flexible usage of the script."""
     description = "A script used to generate Python files."

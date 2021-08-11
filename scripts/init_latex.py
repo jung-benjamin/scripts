@@ -12,7 +12,8 @@ def main():
 def init_latex():
     """Generate a LaTeX file."""
     args = argparser()
-    
+    config = configparser()
+
     main_fname = "main.tex"
     preamble_fname = "preamble.tex"
     bib_fname = "bibliography.bib"
@@ -49,6 +50,31 @@ def init_latex():
     if args.bib:
         with open(bib_fname, "w"):
             pass
+
+def configparser():
+    """Config file parser to read deafault settings
+
+    The config file can be created by the user to 
+    change default arguments of the file creation 
+    function.
+    """
+    parser = configparser.ConfigParser()
+    config_file = None
+    ## expand the search options for the config file later
+    ## keep the list in the priority order
+    config_locs = [os.curdir, os.path.expanduser('~')] 
+    for loc in config_locs:
+        if os.path.exists(os.path.join(loc, 'scripts_config.cf')):
+            config_file = os.path.join(loc, 'scripts_config.cf')
+            break
+        else:
+            pass
+    
+    if config_file is not None:
+        parser.read(config_file)
+        return parser
+    else:
+        return
 
 def argparser():
     """Argument parser."""
