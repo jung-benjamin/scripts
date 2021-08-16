@@ -76,7 +76,7 @@ def argparser():
 
     template = "Section of the config file to use"
     parser.add_argument("-t", "--template", type = str, help = template,
-                        default = "DEFAULT")
+                        default = "DEFAULTS")
 
     return parser
 
