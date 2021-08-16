@@ -57,11 +57,15 @@ def init_latex():
             for element in it:
                 if element.name.startswith('.'):
                     pass
+                elif element.name == main_fname:
+                    pass
+                elif element_name == preamble_fname:
+                    pass
                 elif element.is_file(follow_symlinks = False):
                     shutil.copyfile(element.path, os.path.join(element.name))
                 elif element.is_dir(follow_symlinks = False):
                     shutil.copytree(element.path, os.path.join(element.name))
-                
+
 def parse_config():
     """Config file parser to read deafault settings
 
