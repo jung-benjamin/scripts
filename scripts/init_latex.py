@@ -5,6 +5,7 @@ import argparse
 import configparser
 import os
 import shutil
+from scripts import config
 
 def main():
     """Generate a LaTeX file."""
@@ -12,8 +13,9 @@ def main():
 
 def init_latex():
     """Generate a LaTeX file."""
-    args = argparser()
-    config = parse_config()
+    #args = argparser()
+    #config = parse_config()
+    args = config.parse_arguments()
 
     main_fname = "main.tex"
     preamble_fname = "preamble.tex"
@@ -59,7 +61,7 @@ def init_latex():
                     pass
                 elif element.name == main_fname:
                     pass
-                elif element_name == preamble_fname:
+                elif element.name == preamble_fname:
                     pass
                 elif element.is_file(follow_symlinks = False):
                     shutil.copyfile(element.path, os.path.join(element.name))

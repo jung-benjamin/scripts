@@ -8,8 +8,6 @@ Commandline options
     specify a section of the configfile to use for copying the template
 
 
-Configfile options
-------------------
 """
 
 import os
@@ -76,5 +74,20 @@ def argparser():
     template_path = "Path to a directory containing template files."
     parser.add_argument("--template_path", type = str)
 
-    return parser.parse_args()
+    template = "Section of the config file to use"
+    parser.add_argument("-t", "--template", type = str, help = template,
+                        default = "DEFAULT")
+
+    return parser
+
+def parse_arguments():
+    """Read commandline arguments and config file"""
+    cmd_line = argparser()
+    cmd = cmd_line.parse_args()
+    cfg_file = parse_config(cmd)
+    cfg_dict = cfg_file[cmd.template]
+    cmd_line.set_defaults(**cfg_dict)
+    arguments = cmd_line.parse_args()
+    return arguments
+
 
